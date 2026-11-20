@@ -24,18 +24,18 @@ jobs:
 
      - name: Terraform Validate
        run: |
-         terraform -chdir=project-12-terraform-plan init
-         terraform -chdir=project-12-terraform-plan validate
+         terraform -chdir=project12-Terraform-Plan init
+         terraform -chdir=project12-Terraform-Plan validate
 
      - name: Terraform Plan
        run: |
-         terraform -chdir=project-12-terraform-plan plan -out=tfplan
-         terraform -chdir=project-12-terraform-plan show -no-color tfplan > plan.txt
+         terraform -chdir=project12-Terraform-Plan plan -out=tfplan
+         terraform -chdir=project12-Terraform-Plan show -no-color tfplan > plan.txt
 
      - name: Upload Terraform Plan
        uses: actions/upload-artifact@v4
        with:
          name: terraform-plan
          path: |
-           project-12-terraform-plan/tfplan
-           project-12-terraform-plan/plan.txt
+           project12-Terraform-Plan/tfplan
+           project12-Terraform-Plan/plan.txt
