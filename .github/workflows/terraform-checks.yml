@@ -10,7 +10,6 @@ on:
 
 jobs:
  terraform-check:
-   name: Terraform Format and Validate
    runs-on: ubuntu-latest
 
    steps:
@@ -20,13 +19,23 @@ jobs:
      - name: Setup Terraform
        uses: hashicorp/setup-terraform@v3
 
-     - name: Check formatting
+     - name: Terraform Format
        run: terraform fmt -check -recursive
 
-     - name: Validate Terraform files
+     - name: Terraform Validate
        run: |
-         for dir in $(find . -name "*.tf" -not -path "*/.terraform/*" -exec dirname {} \; | sort -u); do
-           echo "Validating $dir"
-           terraform -chdir="$dir" init -backend=false
-           terraform -chdir="$dir" validate
-         done
+         terraform -chdir=project-12-terraform-plan init
+         terraform -chdir=project-12-terraform-plan validate
+
+     - name: Terraform Plan
+       run: |
+         terraform -chdir=project-12-terraform-plan plan -out=tfplan
+         terraform -chdir=project-12-terraform-plan show -no-color tfplan > plan.txt
+
+     - name: Upload Terraform Plan
+       uses: actions/upload-artifact@v4
+       with:
+         name: terraform-plan
+         path: |
+           project-12-terraform-plan/tfplan
+           project-12-terraform-plan/plan.txt
