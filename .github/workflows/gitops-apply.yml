@@ -5,7 +5,7 @@ on:
    branches:
      - main
    paths:
-     - 'project-18-gitops/**'
+     - 'project18-GitOps-Infra-Deployment/**'
      - '.github/workflows/gitops-apply.yml'
 
 permissions:
@@ -24,16 +24,16 @@ jobs:
        uses: hashicorp/setup-terraform@v3
 
      - name: Terraform Init
-       run: terraform -chdir=project-18-gitops init -backend=false
+       run: terraform -chdir=project18-GitOps-Infra-Deployment init -backend=false
 
      - name: Terraform Plan
-       run: terraform -chdir=project-18-gitops plan -out=tfplan
+       run: terraform -chdir=project18-GitOps-Infra-Deployment plan -out=tfplan
 
      - name: Upload Plan
        uses: actions/upload-artifact@v4
        with:
          name: terraform-plan
-         path: project-18-gitops/tfplan
+         path: project18-GitOps-Infra-Deployment/tfplan
 
  apply:
    name: Terraform Apply
@@ -49,13 +49,13 @@ jobs:
        uses: hashicorp/setup-terraform@v3
 
      - name: Terraform Init
-       run: terraform -chdir=project-18-gitops init -backend=false
+       run: terraform -chdir=project18-GitOps-Infra-Deployment init -backend=false
 
      - name: Download Plan
        uses: actions/download-artifact@v4
        with:
          name: terraform-plan
-         path: project-18-gitops
+         path: project18-GitOps-Infra-Deployment
 
      - name: Terraform Apply
-       run: terraform -chdir=project-18-gitops apply -auto-approve tfplan
+       run: terraform -chdir=project18-GitOps-Infra-Deployment apply -auto-approve tfplan
