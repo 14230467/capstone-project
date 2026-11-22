@@ -22,8 +22,12 @@ data "aws_instance" "webserver" {
     values = ["Ansible-Managed-Node"]
   }
 
-  most_recent = true
+  filter {
+    name   = "instance-state-name"
+    values = ["running"]
+  }
 }
+
 
 # Find the existing Managed Node security group
 data "aws_security_group" "managed_node" {
