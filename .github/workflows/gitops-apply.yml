@@ -1,0 +1,61 @@
+name: GitOps Infrastructure Deployment
+
+on:
+ push:
+   branches:
+     - main
+   paths:
+     - 'project-18-gitops/**'
+     - '.github/workflows/gitops-apply.yml'
+
+permissions:
+ contents: read
+
+jobs:
+ plan:
+   name: Terraform Plan
+   runs-on: ubuntu-latest
+
+   steps:
+     - name: Checkout repository
+       uses: actions/checkout@v4
+
+     - name: Setup Terraform
+       uses: hashicorp/setup-terraform@v3
+
+     - name: Terraform Init
+       run: terraform -chdir=project-18-gitops init -backend=false
+
+     - name: Terraform Plan
+       run: terraform -chdir=project-18-gitops plan -out=tfplan
+
+     - name: Upload Plan
+       uses: actions/upload-artifact@v4
+       with:
+         name: terraform-plan
+         path: project-18-gitops/tfplan
+
+ apply:
+   name: Terraform Apply
+   needs: plan
+   runs-on: ubuntu-latest
+   environment: production
+
+   steps:
+     - name: Checkout repository
+       uses: actions/checkout@v4
+
+     - name: Setup Terraform
+       uses: hashicorp/setup-terraform@v3
+
+     - name: Terraform Init
+       run: terraform -chdir=project-18-gitops init -backend=false
+
+     - name: Download Plan
+       uses: actions/download-artifact@v4
+       with:
+         name: terraform-plan
+         path: project-18-gitops
+
+     - name: Terraform Apply
+       run: terraform -chdir=project-18-gitops apply -auto-approve tfplan
